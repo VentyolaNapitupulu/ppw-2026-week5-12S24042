@@ -28,15 +28,23 @@ class BukuFactory extends Factory
             'Erlangga', 'Deepublish', 'Mizan',
         ];
 
+        // Topik dipilih sekali supaya judul dan sinopsis nyambung
+        $topikTerpilih = fake()->randomElement($topik);
+        $sinopsisList = [
+            "Buku ini membahas $topikTerpilih secara runtut, mulai dari konsep dasar hingga contoh penerapan yang dekat dengan kebutuhan mahasiswa.",
+            "Disusun untuk membantu pembaca memahami $topikTerpilih, dilengkapi studi kasus dan latihan soal di setiap akhir bab.",
+            "Panduan lengkap $topikTerpilih dengan pendekatan praktis, cocok sebagai referensi perkuliahan maupun belajar mandiri.",
+        ];
+
         return [
             'isbn'         => fake()->unique()->isbn13(),
-            'judul'        => fake()->randomElement($awalan) . ' ' . fake()->randomElement($topik),
+            'judul'        => fake()->randomElement($awalan) . ' ' . $topikTerpilih,
             'penulis'      => fake('id_ID')->name(),
             'penerbit'     => fake()->randomElement($penerbit),
             'tahun_terbit' => fake()->numberBetween(2005, 2025),
             'kategori_id'  => Kategori::factory(),
             'stok'         => fake()->numberBetween(0, 30),
-            'sinopsis'     => fake('id_ID')->paragraph(3),
+            'sinopsis'     => fake()->randomElement($sinopsisList),
         ];
     }
 }
