@@ -2,7 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use App\Models\Buku;
+use App\Models\Kategori;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -13,11 +14,19 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        $data = [
+            ['TKN', 'Teknologi Informasi'],
+            ['SNS', 'Sains'],
+            ['BSN', 'Bisnis dan Manajemen'],
+            ['SSR', 'Sastra'],
+            ['MTK', 'Matematika'],
+        ];
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        $kategoris = collect($data)->map(fn ($d) => Kategori::create([
+            'kode_kategori' => $d[0],
+            'nama_kategori' => $d[1],
+        ]));
+
+        Buku::factory(20)->recycle($kategoris)->create();
     }
 }
