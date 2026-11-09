@@ -160,8 +160,8 @@ Data uji berasal dari seeder: buku *Keamanan Aplikasi Web* (stok 1) dan *Rekayas
 | Pinjam buku stok 1 | Berhasil, stok menjadi 0 | ![](docs/screenshots/week6-pinjam-sukses.png) |
 | Pinjam buku stok 0 | Ditolak, rollback, tidak ada baris baru | ![](docs/screenshots/week6-tolak-stok-0.png) |
 | Kembalikan buku | Stok bertambah 1 | ![](docs/screenshots/week6-kembalikan.png) |
-| Klik Kembalikan dua kali | Ditolak, stok tidak bertambah dua kali | ![](docs/screenshots/week6-tolak-klik-ganda.png) |
-| Stok akhir di database | Tidak pernah negatif | ![](docs/screenshots/week6-stok-tinker.png) |
+| Klik Kembalikan dua kali | Ditolak; stok tidak bertambah dua kali | ![](docs/screenshots/week6-tolak-klik-ganda.png)<br>![](docs/screenshots/week6-tolak-klik-ganda2.png) |
+| Belum login, buka /peminjaman	Dialihkan ke /login | Tidak bisa masuk ke akun | ![](docs/screenshots/week6-stok-kredensial.png) |
 
 ## Audit Cookie dan Sesi
 
