@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use App\Models\Buku;
 use App\Models\Kategori;
 use Illuminate\Http\Request;
@@ -9,12 +10,40 @@ use Illuminate\Validation\Rule;
 
 class BukuController extends Controller
 {
-    public function index()
-    {
-        // Eager loading: kategori diambil sekaligus, mencegah N+1
-        $bukus = Buku::with('kategori')->latest()->paginate(10);
-        return view('buku.index', compact('bukus'));
+   public function index(Request $request)
+{
+    // State sesi: ingat pencarian terakhir
+    if ($request->filled('search')) {
+        session(['last_search' => $request->search]);
     }
+
+    $bukus = Buku::with('kategori')
+        ->withCount('peminjamans')
+        ->when($request->search, function ($q, $s) {
+            // Dikelompokkan supaya OR tidak menembus filter kategori
+            $q->where(function ($w) use ($s) {
+                $w->where('judul', 'like', "%{$s}%")
+                  ->orWhere('penulis', 'like', "%{$s}%")
+                  ->orWhere('isbn', 'like', "%{$s}%");
+            });
+        })
+        ->when($request->kategori, fn ($q, $k) => $q->where('kategori_id', $k))
+        ->latest()
+        ->paginate(10)
+        ->withQueryString();
+
+    $kategoris = Kategori::orderBy('nama_kategori')->get(['id', 'nama_kategori']);
+
+    // Statistik: Query Builder, tanpa Model
+    $stats = [
+        'total_judul'        => DB::table('bukus')->count(),
+        'total_stok'         => DB::table('bukus')->sum('stok'),
+        'sedang_dipinjam'    => DB::table('peminjamans')->where('status', 'dipinjam')->count(),
+        'total_dikembalikan' => DB::table('peminjamans')->where('status', 'dikembalikan')->count(),
+    ];
+
+    return view('buku.index', compact('bukus', 'kategoris', 'stats'));
+}
 
     public function create()
     {
