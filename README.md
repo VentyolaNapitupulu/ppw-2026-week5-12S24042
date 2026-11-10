@@ -182,6 +182,61 @@ ID sesi pada tabel `sessions` berganti setelah login (`regenerate()`), dan baris
 
 Branch: `week9-rest-api`
 
+## Identitas
+
+| | |
+|---|---|
+| Nama | Ventyola Rohati Napitupulu |
+| NIM | 12S24042 |
+| Kelas | *(isi kelas Anda)* |
+| Program Studi | *(isi program studi Anda)* |
+
+## Panduan Instalasi & Pengujian Cepat
+
+```bash
+git clone https://github.com/VentyolaNapitupulu/ppw-2026-week5-12S24042.git
+cd ppw-2026-week5-12S24042
+git checkout week9-rest-api
+composer install
+cp .env.example .env
+php artisan key:generate
+php artisan migrate:fresh --seed
+php artisan serve
+```
+
+Akun uji pustakawan (dibuat oleh seeder): **`pustakawan@del.ac.id` / `password123`**
+
+**Menguji dengan Postman:**
+1. Postman → **Import** → pilih `docs/SIPUS-Del-APIv1.postman_collection.json`.
+2. Variabel koleksi `base_url` sudah berisi `http://localhost:8000/api/v1`.
+3. Jalankan **AUTH - login** terlebih dahulu; token otomatis tersimpan ke `{{token}}`
+   dan diwarisi seluruh request terproteksi.
+
+**Kontrak layanan:** `docs/openapi-sipus-v1.yaml` (OpenAPI 3.0.3). Tempel isinya ke
+https://editor.swagger.io untuk dokumentasi interaktif. Kontrak SOAP tersedia di
+`GET /soap/sipus.wsdl`.
+
+## Katalog Endpoint Web Services
+
+| Method | URI | Auth | Deskripsi | Status Respons |
+|---|---|---|---|---|
+| GET | `/soap/sipus.wsdl` | Publik | Kontrak WSDL `CheckClearanceStatus` | 200 |
+| POST | `/soap/sipus` | Publik | SOAP cek bebas pustaka (`active_loans`, `is_cleared`) | 200, 500 (Fault) |
+| POST | `/api/v1/auth/login` | Publik | Terbitkan Bearer Token (8 jam, maks. 5x/menit) | 200, 401, 422, 429 |
+| GET | `/api/v1/auth/me` | Bearer | Profil pemilik token | 200, 401 |
+| POST | `/api/v1/auth/logout` | Bearer | Cabut token aktif | 200, 401 |
+| GET | `/api/v1/bukus` | Publik | Katalog terpaginasi + search/filter/sort | 200 |
+| GET | `/api/v1/bukus/{id}` | Publik | Detail + kategori + riwayat + HATEOAS | 200, 404 |
+| GET | `/api/v1/bukus/{id}/referensi-eksternal` | Publik | Metadata OpenLibrary (timeout + fallback cache) | 200, 404, 502, 504 |
+| POST | `/api/v1/bukus` | Bearer | Tambah buku | 201 + Location, 401, 422 |
+| PUT | `/api/v1/bukus/{id}` | Bearer | Ganti seluruh atribut | 200, 404, 422 |
+| PATCH | `/api/v1/bukus/{id}` | Bearer | Ubah sebagian atribut | 200, 400, 404, 422 |
+| DELETE | `/api/v1/bukus/{id}` | Bearer | Hapus buku | 204, 404, 409 |
+| GET | `/api/v1/peminjamans` | Bearer | Daftar transaksi (`?status=`, `?nim=`) | 200, 401, 422 |
+| GET | `/api/v1/peminjamans/{id}` | Bearer | Detail transaksi | 200, 404 |
+| POST | `/api/v1/peminjamans` | Bearer | Pinjam buku (ACID) | 201 + Location, 409, 422 |
+| PATCH | `/api/v1/peminjamans/{id}/kembalikan` | Bearer | Kembalikan buku (ACID) | 200, 404, 409 |
+
 ## Analisis Kebutuhan & Kelayakan Web Services
 
 ### Peran SIPUS-Del dalam Ekosistem Layanan
@@ -388,3 +443,12 @@ dalam format RFC 7807, sehingga klien tidak pernah menunggu tanpa batas.
 | Internet terputus, fallback ke cache | ![](docs/screenshots/week9-ref-fallback-cache.png) |
 | Internet terputus tanpa cache: 504 | ![](docs/screenshots/week9-ref-504.png) |
 | ISBN tidak dikenal OpenLibrary: 404 | ![](docs/screenshots/week9-ref-404.png) |
+
+
+## Latihan REST Consumer: GitHub REST API
+
+Menguji `PATCH https://api.github.com/user` dengan Personal Access Token (scope `user`,
+berlaku 7 hari, sudah dihapus setelah praktikum). PATCH dipakai karena hanya atribut
+`bio` yang diubah tanpa menyentuh atribut lain. Token pada screenshot disensor.
+
+![](docs/screenshots/week9-github-patch.png)

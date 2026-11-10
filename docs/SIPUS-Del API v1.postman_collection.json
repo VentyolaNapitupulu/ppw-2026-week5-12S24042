@@ -1,0 +1,884 @@
+{
+  "info": {
+    "_postman_id": "2a1d78e9-2f41-4959-a554-f11d9aeb32a5",
+    "name": "SIPUS-Del API v1",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "60079428",
+    "_collection_link": "https://go.postman.co/collection/60079428-2a1d78e9-2f41-4959-a554-f11d9aeb32a5?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "RFC7807 - 401 tanpa token",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/auth/me",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "me"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "RFC7807 - 404 endpoint salah",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8000/api/v1/ngawur",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "v1",
+            "ngawur"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "RFC7807 - 405 metode salah",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8000/api/user",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "api",
+            "user"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "SOAP - belum bebas pustaka",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"\r\n               xmlns:m=\"http://sipus.del.ac.id/soap/library\">\r\n    <soap:Body>\r\n        <m:CheckClearanceStatusRequest>\r\n            <m:nim_peminjam>12S99999</m:nim_peminjam>\r\n        </m:CheckClearanceStatusRequest>\r\n    </soap:Body>\r\n</soap:Envelope>",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8000/soap/sipus",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "soap",
+            "sipus"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "SOAP - bebas pustaka",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"\r\n               xmlns:m=\"http://sipus.del.ac.id/soap/library\">\r\n    <soap:Body>\r\n        <m:CheckClearanceStatusRequest>\r\n            <m:nim_peminjam>12S99999</m:nim_peminjam>\r\n        </m:CheckClearanceStatusRequest>\r\n    </soap:Body>\r\n</soap:Envelope>",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8000/soap/sipus",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "soap",
+            "sipus"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "SOAP - fault NIM kosong",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"\r\n               xmlns:m=\"http://sipus.del.ac.id/soap/library\">\r\n    <soap:Body>\r\n        <m:CheckClearanceStatusRequest>\r\n            <m:nim_peminjam></m:nim_peminjam>\r\n        </m:CheckClearanceStatusRequest>\r\n    </soap:Body>\r\n</soap:Envelope>",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8000/soap/sipus",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "soap",
+            "sipus"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "SOAP - fault XML cacat",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\"\r\n               xmlns:m=\"http://sipus.del.ac.id/soap/library\">\r\n    <soap:Body>\r\n        <m:CheckClearanceStatusRequest>\r\n            <m:nim_peminjam>12S24042</m:nim_peminjam>\r\n        </m:CheckClearanceStatusRequest>\r\n    </soap:Body>\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8000/soap/sipus",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8000",
+          "path": [
+            "soap",
+            "sipus"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "AUTH - login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "if (pm.response.code === 200) {\r\n    pm.collectionVariables.set(\"token\", pm.response.json().data.access_token);\r\n}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n       \"email\": \"pustakawan@del.ac.id\",\r\n       \"password\": \"password123\",\r\n       \"device_name\": \"postman-ventyola\"\r\n   }",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/auth/login",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "AUTH - me",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/auth/me",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "me"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "AUTH - logout",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/auth/logout",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "auth",
+            "logout"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "BUKU - katalog",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/bukus?per_page=5&sort=stok&dir=desc",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "bukus"
+          ],
+          "query": [
+            {
+              "key": "per_page",
+              "value": "5"
+            },
+            {
+              "key": "sort",
+              "value": "stok"
+            },
+            {
+              "key": "dir",
+              "value": "desc"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "BUKU - filter tersedia",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/bukus?tersedia=1&search=pemrograman",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "bukus"
+          ],
+          "query": [
+            {
+              "key": "tersedia",
+              "value": "1"
+            },
+            {
+              "key": "search",
+              "value": "pemrograman"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "BUKU - detail stok habis",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/bukus/21",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "bukus",
+            "21"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "{{base_url}}/bukus/99999",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/bukus/99999",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "bukus",
+            "99999"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "BUKU - tambah tanpa token",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"isbn\": \"978-602-1234-56-7\",\r\n    \"judul\": \"Arsitektur Web Services Modern\",\r\n    \"penulis\": \"Chandro Pardede\",\r\n    \"penerbit\": \"IT Del Press\",\r\n    \"tahun_terbit\": 2026,\r\n    \"kategori_id\": 1,\r\n    \"stok\": 3,\r\n    \"sinopsis\": \"Membahas SOAP, REST, dan HATEOAS.\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/bukus",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "bukus"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "BUKU - PATCH stok",
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"stok\": 10}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/bukus/{id baru}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "bukus",
+            "{id baru}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "BUKU - tambah gagal validasi",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"isbn\":\"\",\"stok\":-5}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/bukus",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "bukus"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "BUKU - tambah",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"isbn\": \"978-602-1234-56-7\",\r\n    \"judul\": \"Arsitektur Web Services Modern\",\r\n    \"penulis\": \"Chandro Pardede\",\r\n    \"penerbit\": \"IT Del Press\",\r\n    \"tahun_terbit\": 2026,\r\n    \"kategori_id\": 1,\r\n    \"stok\": 3,\r\n    \"sinopsis\": \"Membahas SOAP, REST, dan HATEOAS.\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/bukus",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "bukus"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "{{base_url}}/bukus/25",
+      "request": {
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"isbn\": \"978-602-1234-99-1\",\r\n    \"judul\": \"Arsitektur Web Services Modern (Edisi 2)\",\r\n    \"penulis\": \"Chandro Pardede\",\r\n    \"penerbit\": \"IT Del Press\",\r\n    \"tahun_terbit\": 2026,\r\n    \"kategori_id\": 1,\r\n    \"stok\": 10\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/bukus/25",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "bukus",
+            "25"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "BUKU - hapus masih dipinjam",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/bukus/21",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "bukus",
+            "21"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "{{base_url}}/bukus/25",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/bukus/25",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "bukus",
+            "25"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "PJM - pinjam tanpa token",
+      "request": {
+        "auth": {
+          "type": "noauth"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "   {\r\n       \"buku_id\": 1,\r\n       \"nim_peminjam\": \"12S24042\",\r\n       \"nama_peminjam\": \"Ventyola Napitupulu\",\r\n       \"durasi_hari\": 7\r\n   }",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/peminjamans",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "peminjamans"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "PJM - pinjam gagal validasi",
+      "request": {
+        "auth": {
+          "type": "bearer"
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"buku_id\": 99999, \"durasi_hari\": 5}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/peminjamans",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "peminjamans"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "PJM - pinjam",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "   {\r\n       \"buku_id\": 1,\r\n       \"nim_peminjam\": \"12S24042\",\r\n       \"nama_peminjam\": \"Ventyola Napitupulu\",\r\n       \"durasi_hari\": 7\r\n   }",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/peminjamans",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "peminjamans"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "PJM - pinjam stok habis",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "   {\r\n       \"buku_id\": 22,\r\n       \"nim_peminjam\": \"12S24042\",\r\n       \"nama_peminjam\": \"Ventyola Napitupulu\",\r\n       \"durasi_hari\": 7\r\n   }",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/peminjamans",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "peminjamans"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "PJM - pinjam ganda",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "   {\r\n       \"buku_id\": 1,\r\n       \"nim_peminjam\": \"12S24042\",\r\n       \"nama_peminjam\": \"Ventyola Napitupulu\",\r\n       \"durasi_hari\": 7\r\n   }",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/peminjamans",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "peminjamans"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "PJM - daftar aktif",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/peminjamans?status=dipinjam&nim=12S24042",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "peminjamans"
+          ],
+          "query": [
+            {
+              "key": "status",
+              "value": "dipinjam"
+            },
+            {
+              "key": "nim",
+              "value": "12S24042"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "PJM - kembalikan",
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/peminjamans/5/kembalikan",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "peminjamans",
+            "5",
+            "kembalikan"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "PJM - kembalikan lagi",
+      "request": {
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/peminjamans/5/kembalikan",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "peminjamans",
+            "5",
+            "kembalikan"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "BUKU - tambah ISBN asli",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"isbn\": \"978-0-13-235088-4\",\r\n    \"judul\": \"Clean Code\",\r\n    \"penulis\": \"Robert C. Martin\",\r\n    \"penerbit\": \"Prentice Hall\",\r\n    \"tahun_terbit\": 2008,\r\n    \"kategori_id\": 1,\r\n    \"stok\": 2,\r\n    \"sinopsis\": \"Panduan menulis kode yang bersih dan mudah dirawat.\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/bukus",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "bukus"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "REF - sukses",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/bukus/26/referensi-eksternal",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "bukus",
+            "26",
+            "referensi-eksternal"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "REF - fallback cache",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/bukus/26/referensi-eksternal",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "bukus",
+            "26",
+            "referensi-eksternal"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "REF - 504 tanpa cache",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/bukus/1/referensi-eksternal",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "bukus",
+            "1",
+            "referensi-eksternal"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "{{base_url}}/bukus/1/referensi-eksternal",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/bukus/1/referensi-eksternal",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "bukus",
+            "1",
+            "referensi-eksternal"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": ""
+    },
+    {
+      "key": "token",
+      "value": ""
+    }
+  ]
+}
