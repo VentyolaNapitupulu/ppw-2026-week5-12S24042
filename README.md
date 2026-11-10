@@ -232,3 +232,26 @@ kosong, XML cacat, operasi tidak dikenali, atau `<nim_peminjam>` kosong.
 | Bebas pustaka (`is_cleared=true`) | ![](docs/screenshots/week9-soap-bebas.jpeg) |
 | Fault: NIM kosong | ![](docs/screenshots/week9-soap-fault-kosong.jpeg) |
 | Fault: XML cacat | ![](docs/screenshots/week9-soap-fault-xml.png) |
+
+
+## Standar Galat API (RFC 7807)
+
+Seluruh galat pada `/api/*` ditangani satu pintu di `bootstrap/app.php` dan
+selalu dikembalikan sebagai `application/problem+json` dengan atribut
+`type`, `title`, `status`, `detail`, dan `instance` (ditambah `errors` untuk 422).
+Halaman web Blade Minggu 6 tidak terpengaruh.
+
+| Status | Kapan |
+|---|---|
+| 401 | Bearer Token tidak ada, salah, kedaluwarsa, atau sudah dicabut |
+| 403 | Token valid tetapi tidak berhak |
+| 404 | Endpoint atau resource tidak ditemukan |
+| 405 | Metode HTTP tidak diizinkan pada endpoint |
+| 409 | Konflik state bisnis (mis. pinjaman ganda) |
+| 422 | Validasi input gagal |
+| 429 | Melebihi batas percobaan (rate limit) |
+| 500 | Kesalahan server (pesan internal disembunyikan jika `APP_DEBUG=false`) |
+
+| Bukti | |
+|---|---|
+| 401 tanpa token (`application/problem+json`) | ![](docs/screenshots/week9-rfc7807-401.png) |
