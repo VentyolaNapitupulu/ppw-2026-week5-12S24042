@@ -175,3 +175,60 @@ ID sesi pada tabel `sessions` berganti setelah login (`regenerate()`), dan baris
 
 - Penguncian baris `lockForUpdate()` sepenuhnya bekerja pada MySQL (InnoDB). Pada SQLite, kueri kunci diabaikan dan seluruh berkas dikunci saat penulisan.
 - Kolom `stok` bertipe `unsigned` sebagai pengaman kedua di samping pengecekan di kode.
+
+---
+
+# Tahap 3 (Minggu 9): Web Services & REST API
+
+Branch: `week9-rest-api`
+
+## Analisis Kebutuhan & Kelayakan Web Services
+
+### Peran SIPUS-Del dalam Ekosistem Layanan
+
+| Kebutuhan Integrasi | Peran SIPUS-Del | Pihak Lain | Alasan |
+|---|---|---|---|
+| Cek bebas pustaka untuk yudisium | **Provider (SOAP)** | Sistem Yudisium legacy (Consumer) | Data pinjaman adalah domain sah perpustakaan; sistem yudisium cukup menerima jawaban bebas/belum bebas tanpa mengakses tabel kami. |
+| Aplikasi Mobile & Kiosk Perpustakaan | **Provider (REST)** | Aplikasi Mobile/Kiosk (Consumer) | Katalog dan sirkulasi adalah milik perpustakaan; klien baru cukup memanggil API tanpa menyentuh database. |
+| Metadata buku (halaman, sampul, penerbit) | **Consumer (REST)** | OpenLibrary API (Provider) | Membangun basis metadata buku sedunia berada di luar domain inti dan jauh lebih mahal daripada memakai layanan publik yang sudah ada. |
+
+### Mengapa SOAP untuk Yudisium?
+
+Sistem Yudisium sudah berjalan dan hanya mampu berkomunikasi lewat SOAP XML.
+Mengubah sistem tersebut lebih mahal dan berisiko daripada menyediakan satu
+endpoint SOAP. Karena hanya ada satu operasi sederhana (`CheckClearanceStatus`),
+ukuran XML yang besar tidak menjadi masalah, dan kontrak WSDL memudahkan
+sistem legacy membuat client stub secara otomatis.
+
+### Mengapa REST untuk Mobile/Kiosk?
+
+| Aspek | SOAP | REST (dipilih) |
+|---|---|---|
+| Ukuran payload | Besar (amplop XML) | Ringkas (JSON), hemat kuota data mahasiswa |
+| Operasi | Hanya POST | GET/POST/PUT/PATCH/DELETE sesuai semantik |
+| Cache | Tidak bisa (semua POST) | Katalog GET dapat di-cache |
+| Dukungan klien | Butuh library SOAP | JSON didukung langsung di Flutter, Kotlin, JavaScript |
+| State | Umumnya stateless | Wajib stateless (Bearer Token), mudah diskalakan untuk banyak kiosk |
+
+Kiosk dan aplikasi mobile lebih banyak membaca katalog dan melakukan transaksi
+singkat. REST dengan JSON lebih ringan, lebih cepat diproses, dan lebih mudah
+dikembangkan tim mobile, sehingga REST lebih layak dibanding SOAP.
+
+## Endpoint SOAP Bebas Pustaka
+
+| Method | URI | Keterangan |
+|---|---|---|
+| GET | `/soap/sipus.wsdl` | Kontrak WSDL operasi `CheckClearanceStatus` |
+| POST | `/soap/sipus` | Menerima `<nim_peminjam>`, mengembalikan `<active_loans>` & `<is_cleared>` |
+
+NIM yang belum pernah meminjam dianggap **bebas pustaka** (`is_cleared = true`),
+bukan galat. `<soap:Fault>` (HTTP 500, sesuai SOAP 1.1) hanya dikirim bila body
+kosong, XML cacat, operasi tidak dikenali, atau `<nim_peminjam>` kosong.
+
+| Skenario | Bukti |
+|---|---|
+| Kontrak WSDL | ![](docs/screenshots/week9-soap-wsdl.png) |
+| Masih punya pinjaman (`is_cleared=false`) | ![](docs/screenshots/week9-soap-belum-bebas.jpeg) |
+| Bebas pustaka (`is_cleared=true`) | ![](docs/screenshots/week9-soap-bebas.jpeg) |
+| Fault: NIM kosong | ![](docs/screenshots/week9-soap-fault-kosong.jpeg) |
+| Fault: XML cacat | ![](docs/screenshots/week9-soap-fault-xml.png) |

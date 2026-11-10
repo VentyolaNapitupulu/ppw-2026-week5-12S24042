@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BukuController;
 use App\Http\Controllers\KategoriController;
 use App\Http\Controllers\PeminjamanController;
+use App\Http\Controllers\Soap\LibrarySoapController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -31,3 +32,6 @@ Route::middleware('auth')->group(function () {
 // Publik: hanya membaca
 Route::resource('buku', BukuController::class)->only(['index', 'show']);
 Route::resource('kategori', KategoriController::class)->only(['index', 'show']);
+// Web Service SOAP (Minggu 9): konsumen = Sistem Yudisium legacy
+Route::get('/soap/sipus.wsdl', [LibrarySoapController::class, 'wsdl']);
+Route::post('/soap/sipus', [LibrarySoapController::class, 'handle']);
