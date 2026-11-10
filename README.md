@@ -278,3 +278,47 @@ Di Postman, token disimpan otomatis ke variabel koleksi `{{token}}` oleh script
 | Profil pemilik token | ![](docs/screenshots/week9-auth-me.jpeg) |
 | Token setelah logout ditolak 401 | ![](docs/screenshots/week9-auth-revoked.png) |
 | Validasi gagal 422 (RFC 7807) | ![](docs/screenshots/week9-rfc7807-422.png) |
+
+
+## REST API Katalog Buku (`/api/v1/bukus`)
+
+| Method | URI | Auth | Keterangan | Status |
+|---|---|---|---|---|
+| GET | `/api/v1/bukus` | Publik | Katalog terpaginasi: `?search=` (judul/penulis/ISBN), `?kategori_id=`, `?tersedia=1`, `?sort=judul\|penulis\|tahun_terbit\|stok\|created_at`, `?dir=asc\|desc`, `?per_page=` | 200 |
+| GET | `/api/v1/bukus/{id}` | Publik | Detail buku + kategori + riwayat peminjaman | 200, 404 |
+| POST | `/api/v1/bukus` | Bearer | Tambah buku (ISBN unik, stok ≥ 0, kategori valid) | 201 + `Location`, 401, 422 |
+| PUT | `/api/v1/bukus/{id}` | Bearer | Ganti seluruh representasi (semua field wajib) | 200, 404, 422 |
+| PATCH | `/api/v1/bukus/{id}` | Bearer | Ubah sebagian atribut (hanya field yang dikirim) | 200, 400, 404, 422 |
+| DELETE | `/api/v1/bukus/{id}` | Bearer | Hapus buku; ditolak jika masih ada pinjaman aktif | 204, 404, 409 |
+
+**Representasi terpisah dari tabel.** Data dikembalikan melalui `BukuResource`,
+`KategoriResource`, dan `PeminjamanResource` (Eloquent `JsonResource`), sehingga
+struktur tabel internal tidak terekspos dan atribut terhitung seperti `tersedia`,
+`status_label`, `total_dipinjam`, dan `sedang_dipinjam` dapat ditambahkan.
+
+**Bebas N+1 Query.** Katalog memakai `with('kategori')` dan `withCount()` untuk
+menghitung total riwayat serta pinjaman aktif dalam satu query, berapa pun jumlah
+buku per halaman.
+
+**HATEOAS dinamis (RMM Level 3).** Tautan `_links.pinjam_buku` hanya muncul bila
+`stok > 0`. Pada riwayat peminjaman, `_links.kembalikan_buku` hanya muncul bila
+status masih `dipinjam`. Klien cukup memeriksa keberadaan tautan untuk
+menyalakan atau mematikan tombol, tanpa menduplikasi aturan bisnis.
+
+**PUT vs PATCH.** PATCH `{"stok": 10}` hanya mengubah stok; sinopsis tetap utuh.
+PUT mewajibkan seluruh atribut; `sinopsis` yang tidak dikirim direset menjadi `null`.
+
+**Keamanan input.** Parameter `?sort=` dibatasi allowlist kolom untuk mencegah
+SQL injection pada `ORDER BY`. ISBN dinormalisasi (spasi dan tanda hubung
+dihapus) sebelum validasi `unique`, sehingga `978-602-...` dan `978602...`
+dikenali sebagai ISBN yang sama dan ditolak 422, bukan 500.
+
+| Bukti | |
+|---|---|
+| Katalog terpaginasi + `meta` + `_links` | ![](docs/screenshots/week9-buku-katalog.png) |
+| HATEOAS: stok 0 tanpa `pinjam_buku`, riwayat dengan `kembalikan_buku` | ![](docs/screenshots/week9-buku-hateoas-habis.png) |
+| POST 201 Created + header `Location` | ![](docs/screenshots/week9-buku-201-location.png) |
+| PATCH: hanya stok berubah, sinopsis utuh | ![](docs/screenshots/week9-buku-patch.png) |
+| PUT: sinopsis tidak dikirim menjadi `null` | ![](docs/screenshots/week9-buku-put.png) |
+| DELETE ditolak 409 (masih dipinjam) | ![](docs/screenshots/week9-buku-409.png) |
+| ISBN duplikat ditolak 422 | ![](docs/screenshots/week9-buku-422-isbn-duplikat.png) |
