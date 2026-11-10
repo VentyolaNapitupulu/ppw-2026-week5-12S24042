@@ -322,3 +322,44 @@ dikenali sebagai ISBN yang sama dan ditolak 422, bukan 500.
 | PUT: sinopsis tidak dikirim menjadi `null` | ![](docs/screenshots/week9-buku-put.png) |
 | DELETE ditolak 409 (masih dipinjam) | ![](docs/screenshots/week9-buku-409.png) |
 | ISBN duplikat ditolak 422 | ![](docs/screenshots/week9-buku-422-isbn-duplikat.png) |
+
+
+## REST API Transaksi Sirkulasi (`/api/v1/peminjamans`)
+
+Seluruh endpoint wajib Bearer Token (`auth:sanctum`).
+
+| Method | URI | Keterangan | Status |
+|---|---|---|---|
+| GET | `/api/v1/peminjamans` | Daftar terpaginasi, filter `?status=dipinjam\|dikembalikan` dan `?nim=` | 200, 401, 422 |
+| GET | `/api/v1/peminjamans/{id}` | Detail satu transaksi | 200, 404 |
+| POST | `/api/v1/peminjamans` | Pinjam buku (`buku_id`, `nim_peminjam`, `nama_peminjam`, `durasi_hari` 3/7/14) | 201 + `Location`, 409, 422 |
+| PATCH | `/api/v1/peminjamans/{id}/kembalikan` | Kembalikan buku | 200, 404, 409 |
+
+### Jaminan ACID & Anti Race Condition
+
+**Pinjam** dibungkus `DB::transaction()`:
+1. `SELECT ... FOR UPDATE` pada baris buku (`lockForUpdate()`), sehingga permintaan lain atas buku yang sama harus antre.
+2. Stok diperiksa **setelah** baris terkunci. Jika `stok < 1`, ditolak **422**.
+3. Jika NIM yang sama masih meminjam buku yang sama, ditolak **409**.
+4. `stok - 1` dan pencatatan transaksi terjadi bersama; gagal salah satu berarti keduanya dibatalkan.
+
+**Kembalikan** juga dibungkus `DB::transaction()`. Baris buku dan baris peminjaman
+dikunci dengan urutan yang **sama** seperti proses pinjam (buku lebih dulu) untuk
+mencegah *deadlock*. Status diperiksa setelah terkunci, sehingga dua klik
+"kembalikan" bersamaan hanya diproses sekali; yang kedua mendapat **409**.
+
+Bukti tanpa kebocoran stok (buku ID 1): **9** → pinjam **8** → pinjam ganda ditolak
+409, stok tetap **8** → kembalikan **9** → kembalikan lagi ditolak 409, stok tetap **9**.
+
+### HATEOAS Peminjaman
+
+`_links.kembalikan_buku` (PATCH) hanya muncul selama status `dipinjam`, dan
+otomatis hilang setelah buku dikembalikan.
+
+| Bukti | |
+|---|---|
+| Pinjam berhasil 201 + `kembalikan_buku` | ![](docs/screenshots/week9-pjm-201.png) |
+| Pinjam ganda ditolak 409 | ![](docs/screenshots/week9-pjm-409-ganda.png) |
+| Stok habis ditolak 422 | ![](docs/screenshots/week9-pjm-422-stok-habis.png) |
+| Kembalikan 200, link `kembalikan_buku` hilang | ![](docs/screenshots/week9-pjm-kembalikan.png) |
+| Kembalikan dua kali ditolak 409 | ![](docs/screenshots/week9-pjm-409-sudah-kembali.png) |
