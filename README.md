@@ -255,3 +255,26 @@ Halaman web Blade Minggu 6 tidak terpengaruh.
 | Bukti | |
 |---|---|
 | 401 tanpa token (`application/problem+json`) | ![](docs/screenshots/week9-rfc7807-401.png) |
+
+
+## Otentikasi Stateless (Laravel Sanctum Bearer Token)
+
+| Method | URI | Auth | Keterangan | Status |
+|---|---|---|---|---|
+| POST | `/api/v1/auth/login` | Publik (maks. 5x/menit) | Verifikasi email & password, terbitkan token berlaku 8 jam | 200, 401, 422, 429 |
+| GET | `/api/v1/auth/me` | Bearer | Profil pemilik token + info token | 200, 401 |
+| POST | `/api/v1/auth/logout` | Bearer | Cabut (revoke) token yang sedang dipakai | 200, 401 |
+
+Server tidak menyimpan sesi. Setiap request membawa identitasnya sendiri lewat
+header `Authorization: Bearer <token>`. Setelah logout, token yang sama langsung
+ditolak 401 karena barisnya sudah dihapus dari tabel `personal_access_tokens`.
+
+Di Postman, token disimpan otomatis ke variabel koleksi `{{token}}` oleh script
+*After response* pada request login, lalu diwarisi semua request terproteksi.
+
+| Bukti | |
+|---|---|
+| Login berhasil (token disensor) | ![](docs/screenshots/week9-auth-login.png) |
+| Profil pemilik token | ![](docs/screenshots/week9-auth-me.jpeg) |
+| Token setelah logout ditolak 401 | ![](docs/screenshots/week9-auth-revoked.png) |
+| Validasi gagal 422 (RFC 7807) | ![](docs/screenshots/week9-rfc7807-422.png) |
