@@ -19,6 +19,7 @@ class BukuResource extends JsonResource
             'update_full'    => ['href' => $self, 'method' => 'PUT'],
             'update_partial' => ['href' => $self, 'method' => 'PATCH'],
             'delete'         => ['href' => $self, 'method' => 'DELETE'],
+            'referensi_eksternal' => ['href' => "{$self}/referensi-eksternal", 'method' => 'GET'],
         ];
 
         // HATEOAS dinamis: aksi pinjam HANYA muncul bila stok masih ada

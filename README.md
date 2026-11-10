@@ -363,3 +363,28 @@ otomatis hilang setelah buku dikembalikan.
 | Stok habis ditolak 422 | ![](docs/screenshots/week9-pjm-422-stok-habis.png) |
 | Kembalikan 200, link `kembalikan_buku` hilang | ![](docs/screenshots/week9-pjm-kembalikan.png) |
 | Kembalikan dua kali ditolak 409 | ![](docs/screenshots/week9-pjm-409-sudah-kembali.png) |
+
+
+## REST Service Consumer: Metadata Buku dari OpenLibrary
+
+| Method | URI | Auth | Keterangan | Status |
+|---|---|---|---|---|
+| GET | `/api/v1/bukus/{id}/referensi-eksternal` | Publik (maks. 30x/menit) | Mengambil metadata buku berdasarkan ISBN dari OpenLibrary REST API | 200, 404, 502, 504 |
+
+Pada endpoint ini SIPUS-Del berperan sebagai **Service Consumer**. Laravel memanggil
+`https://openlibrary.org/api/books?bibkeys=ISBN:{isbn}&format=json&jscmd=data`
+melalui fasad `Http` dengan `timeout(8)` dan `connectTimeout(4)`, lalu meringkas
+respons menjadi judul, penulis, penerbit, jumlah halaman, subjek, dan sampul.
+
+**Fallback.** Setiap respons sukses disimpan ke cache selama 24 jam. Jika
+OpenLibrary lambat (lebih dari 8 detik), error, atau internet terputus, API
+mengembalikan salinan cache terakhir dengan `meta.sumber: "cache"`. Jika cache
+juga kosong, API mengembalikan **504 Gateway Timeout** atau **502 Bad Gateway**
+dalam format RFC 7807, sehingga klien tidak pernah menunggu tanpa batas.
+
+| Bukti | |
+|---|---|
+| Sukses dari OpenLibrary | ![](docs/screenshots/week9-ref-sukses.png) |
+| Internet terputus, fallback ke cache | ![](docs/screenshots/week9-ref-fallback-cache.png) |
+| Internet terputus tanpa cache: 504 | ![](docs/screenshots/week9-ref-504.png) |
+| ISBN tidak dikenal OpenLibrary: 404 | ![](docs/screenshots/week9-ref-404.png) |

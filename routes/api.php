@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\AuthTokenController;
 use App\Http\Controllers\Api\V1\BukuApiController;
+use App\Http\Controllers\Api\V1\BukuReferensiController;
 use App\Http\Controllers\Api\V1\PeminjamanApiController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +24,11 @@ Route::prefix('v1')->group(function () {
     // Katalog buku (baca)
     Route::get('/bukus', [BukuApiController::class, 'index']);
     Route::get('/bukus/{id}', [BukuApiController::class, 'show'])->whereNumber('id');
+
+    // REST Consumer: metadata dari OpenLibrary (dibatasi 30x/menit agar tidak membebani layanan eksternal)
+    Route::get('/bukus/{id}/referensi-eksternal', [BukuReferensiController::class, 'show'])
+        ->whereNumber('id')
+        ->middleware('throttle:30,1');
 
     // =====================================================================
     // 2. ENDPOINT TERPROTEKSI BEARER TOKEN (auth:sanctum)
